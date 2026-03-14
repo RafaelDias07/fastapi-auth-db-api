@@ -94,7 +94,7 @@ Documentação interativa da API (Swagger):
 
 http://127.0.0.1:8000/docs
 ```
-🆘 Suporte
+## 🆘 Suporte
 
 Caso encontre algum problema ou tenha dúvidas sobre o projeto, você pode:
 
@@ -104,7 +104,7 @@ Consultar a documentação oficial do FastAPI:
 
 https://fastapi.tiangolo.com/
 
-👨‍💻 Autor
+## 👨‍💻 Autor
 
 Desenvolvido por:
 
