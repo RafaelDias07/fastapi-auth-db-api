@@ -61,7 +61,7 @@ project/
 ├── tests/              # Testes automatizados
 ├── requirements.txt    # Dependências do projeto
 └── README.md
-
+```
 💻 Como Utilizar o Projeto
 1️⃣ Clonar o repositório
 git clone https://github.com/seu-usuario/nome-do-repositorio.git
