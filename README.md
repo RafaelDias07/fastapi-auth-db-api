@@ -54,10 +54,10 @@ project/
 │   ├── routers/        # Rotas da aplicação
 │   ├── models/         # Modelos de dados
 │   ├── repositories/   # Camada de acesso a dados
-│   ├── templates/      # Templates HTML (Jinja)
-│   ├── static/         # Arquivos CSS e JavaScript
 │   └── main.py         # Arquivo principal da aplicação
 │
+├── templates/          # Templates HTML (Jinja)
+├── static/             # Arquivos CSS e JavaScript
 ├── tests/              # Testes automatizados
 ├── requirements.txt    # Dependências do projeto
 └── README.md
