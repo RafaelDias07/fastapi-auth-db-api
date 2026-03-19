@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block conteudo %}
+<div class="auth-page auth-page--login">
+    <div class="auth-shell">
+        <div class="auth-top-nav" aria-label="Navegação de autenticação">
+            <a class="auth-top-link is-active" href="/login">Login</a>
+            <span class="auth-top-sep" aria-hidden="true">|</span>
+            <a class="auth-top-link" href="/registro">Registrar</a>
+        </div>
+
+        <div class="form-card auth-card">
+            <h1 class="auth-form-title">Login</h1>
+            <p class="auth-form-subtitle">Acesse seu painel e gerencie seus clientes.</p>
+
+            <form id="formLogin" class="form-login" action="/login" method="post">
+                <div class="form-group">
+                    <label for="email">Email *</label>
+                    <input type="email" id="email" name="email" class="form-control" value="{{ email }}" placeholder="seuemail@exemplo.com" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="senha">Senha *</label>
+                    <input type="password" id="senha" name="senha" class="form-control" placeholder="*******" value="{{ senha }}" required>
+                </div>
+
+                {% if error %}
+                    <div class="alert-error" role="alert">
+                        <p class="mb-0">{{ error }}</p>
+                    </div>
+                {% endif %}
+                
+                <div class="form-actions auth-form-actions">
+                    <button type="submit" class="btn btn-primary btn-lg">Entrar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

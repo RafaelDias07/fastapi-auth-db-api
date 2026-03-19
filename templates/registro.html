@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block conteudo %}
+<div class="auth-page auth-page--registro">
+    <div class="auth-shell">
+        <div class="auth-top-nav" aria-label="Navegação de autenticação">
+            <a class="auth-top-link" href="/login">Login</a>
+            <span class="auth-top-sep" aria-hidden="true">|</span>
+            <a class="auth-top-link is-active" href="/registro">Registrar</a>
+        </div>
+
+        <div class="form-card auth-card">
+            <h1 class="auth-form-title">Criar conta</h1>
+            <p class="auth-form-subtitle">Cadastre-se para começar a usar o sistema.</p>
+
+            <form id="formRegistro" class="form-registro" action="/registro" method="post">
+                <div class="form-group">
+                    <label for="nome">Nome completo *</label>
+                    <input type="text" id="nome" name="nome" class="form-control" value="{{ nome }}" placeholder="Seu nome" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email *</label>
+                    <input type="email" id="email" name="email" class="form-control" value="{{ email }}" placeholder="seuemail@exemplo.com" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="senha">Senha *</label>
+                    <input type="password" id="senha" name="senha" class="form-control" placeholder="Mínimo 6 caracteres" required minlength="6">
+                </div>
+                
+                <div class="form-group">
+                    <label for="confirma_senha">Confirmar senha *</label>
+                    <input type="password" id="confirma_senha" name="confirma_senha" class="form-control" placeholder="Digite a senha novamente" required>
+                </div>
+                
+                {% if error %}
+                    <div class="alert-error" role="alert">
+                        <p class="mb-0">{{ error }}</p>
+                    </div>
+                {% endif %}
+                
+                <div class="form-actions auth-form-actions">
+                    <button type="submit" class="btn btn-primary btn-lg">Cadastrar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
