@@ -575,6 +575,29 @@ body:has(.auth-page) main.container {
     box-shadow: none;
 }
 
+/* Botão Excluir: vermelho outline premium (compatível com o design) */
+.btn.btn-danger.btn-action {
+    background: transparent !important;
+    background-color: transparent !important;
+    color: #b91c1c;
+    border: 1px solid rgba(239, 68, 68, 0.28);
+    box-shadow: none;
+}
+
+.btn.btn-danger.btn-action:hover {
+    background: rgba(239, 68, 68, 0.06) !important;
+    background-color: rgba(239, 68, 68, 0.06) !important;
+    border-color: rgba(239, 68, 68, 0.42);
+    color: #991b1b;
+    transform: translateY(-1px);
+    box-shadow: 0 10px 24px rgba(239, 68, 68, 0.12);
+}
+
+.btn.btn-danger.btn-action:focus {
+    outline: none;
+    box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.16);
+}
+
 .page-header {
     display: flex;
     flex-wrap: wrap;

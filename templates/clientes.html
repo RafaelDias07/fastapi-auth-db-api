@@ -6,7 +6,10 @@
 <div class="container">
     <div class="page-header">
         <h1 class="page-title">Clientes Cadastrados</h1>
-        <a href="/clientes/novo" class="btn btn-primary">+ Novo Cliente</a>
+        <div class="d-flex gap-2 align-items-center">
+            <button type="button" id="exportPdfBtn" class="btn btn-secondary btn-action">Exportar PDF</button>
+            <a href="/clientes/novo" class="btn btn-primary">+ Novo Cliente</a>
+        </div>
     </div>
 
     <div class="clientes-toolbar">
@@ -39,9 +42,21 @@
                         <td>{{ cliente.email }}</td>
                         <td>{{ cliente.telefone }}</td>
                         <td class="text-end">
-                            <a href="/clientes/{{ cliente.id_ }}" class="btn btn-secondary btn-action">
-                                Editar
-                            </a>
+                            <div class="d-inline-flex gap-2">
+                                <a href="/clientes/{{ cliente.id_ }}" class="btn btn-secondary btn-action">
+                                    Editar
+                                </a>
+                                <button
+                                    type="button"
+                                    class="btn-delete"
+                                    data-id="{{ cliente.id_ }}"
+                                    style="background: transparent; color: #dc2626; border: 1px solid rgba(220, 38, 38, 0.35); border-radius: 999px; padding: 0.45rem 0.9rem; font-size: 0.875rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease;"
+                                    onmouseover="this.style.background='rgba(220,38,38,0.08)'"
+                                    onmouseout="this.style.background='transparent'"
+                                >
+                                    Excluir
+                                </button>
+                            </div>
                         </td>
                     </tr>
                     {% endfor %}
@@ -51,6 +66,7 @@
     </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 <script>
 // Filtro client-side (somente UI), sem chamadas ao backend.
 (function () {
@@ -67,6 +83,136 @@
       const rowText = tr.innerText.toLowerCase();
       tr.style.display = rowText.includes(q) ? '' : 'none';
     });
+  });
+})();
+
+// Exclusão de cliente (UI) usando a rota já existente.
+(function () {
+  const buttons = Array.from(document.querySelectorAll('.btn-delete'));
+  buttons.forEach((btn) => {
+    btn.addEventListener('click', async (e) => {
+      e.preventDefault();
+      const clienteId = btn.getAttribute('data-id');
+      if (!clienteId) return;
+
+      const ok = confirm('Tem certeza que deseja excluir este cliente?');
+      if (!ok) return;
+
+      try {
+        const res = await fetch(`/api/clientes/${clienteId}`, {
+          method: 'DELETE',
+          credentials: 'same-origin'
+        });
+
+        if (!res.ok) {
+          const msg = await res.text().catch(() => '');
+          alert('Falha ao excluir o cliente.' + (msg ? ' ' + msg : ''));
+          return;
+        }
+
+        window.location.href = '/clientes';
+      } catch (err) {
+        alert('Erro ao excluir o cliente.');
+      }
+    });
+  });
+})();
+
+// Exportar PDF com jsPDF (lista completa dos clientes visíveis na tela).
+(function () {
+  const exportBtn = document.getElementById('exportPdfBtn');
+  if (!exportBtn) return;
+
+  exportBtn.addEventListener('click', () => {
+    const JSPDF = window.jspdf && window.jspdf.jsPDF ? window.jspdf.jsPDF : null;
+    if (!JSPDF) {
+      alert('jsPDF não carregou corretamente.');
+      return;
+    }
+
+    const table = document.querySelector('.clientes-lista table');
+    const tbody = table && table.querySelector('tbody');
+    if (!tbody) return;
+
+    const visibleRows = Array.from(tbody.querySelectorAll('tr')).filter((tr) => tr.style.display !== 'none');
+
+    const rows = visibleRows.map((tr) => {
+      const tds = tr.querySelectorAll('td');
+      return {
+        id: (tds[0] && tds[0].textContent ? tds[0].textContent.trim() : ''),
+        nome: (tds[1] && tds[1].textContent ? tds[1].textContent.trim() : ''),
+        email: (tds[2] && tds[2].textContent ? tds[2].textContent.trim() : ''),
+        telefone: (tds[3] && tds[3].textContent ? tds[3].textContent.trim() : '')
+      };
+    });
+
+    const doc = new JSPDF('p', 'pt', 'a4');
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
+
+    const marginX = 40;
+    const startY = 70;
+    const headers = ['ID', 'Nome', 'Email', 'Telefone'];
+    const colWidths = [55, 150, 165, 120]; // soma ~ 490 (A4 pt ~ 595 - margens)
+    const totalWidth = colWidths.reduce((acc, w) => acc + w, 0);
+
+    let y = startY;
+    const lineStep = 12;
+    const cellPadding = 8;
+    const headerHeight = 26;
+    const rowMinHeight = 22;
+
+    const drawHeader = () => {
+      doc.setFillColor(248, 250, 252);
+      doc.setTextColor(15, 23, 42);
+      doc.setDrawColor(229, 231, 235);
+      doc.rect(marginX, y, totalWidth, headerHeight, 'F');
+      doc.rect(marginX, y, totalWidth, headerHeight, 'S');
+
+      let x = marginX;
+      headers.forEach((h, i) => {
+        doc.text(String(h), x + 8, y + 17);
+        x += colWidths[i];
+      });
+      y += headerHeight + 8;
+    };
+
+    const drawRow = (r) => {
+      const values = [r.id, r.nome, r.email, r.telefone];
+      const lines = colWidths.map((w, i) => doc.splitTextToSize(String(values[i] || ''), w - cellPadding));
+      const maxLines = Math.max(...lines.map((l) => l.length), 1);
+      const rowHeight = Math.max(rowMinHeight, maxLines * lineStep + 8);
+
+      if (y + rowHeight > pageHeight - 50) {
+        doc.addPage();
+        y = startY;
+        drawHeader();
+      }
+
+      let x = marginX;
+      for (let i = 0; i < 4; i++) {
+        const cellLines = lines[i];
+        cellLines.forEach((ln, idx) => {
+          doc.text(ln, x + 6, y + 14 + idx * lineStep);
+        });
+        x += colWidths[i];
+      }
+
+      // separador
+      doc.setDrawColor(229, 231, 235);
+      doc.line(marginX, y + rowHeight, marginX + totalWidth, y + rowHeight);
+      y += rowHeight;
+    };
+
+    drawHeader();
+    if (rows.length === 0) {
+      doc.setTextColor(71, 85, 105);
+      doc.text('Nenhum cliente para exportar.', marginX, y + 20);
+    } else {
+      rows.forEach(drawRow);
+    }
+
+    doc.save('clientes.pdf');
   });
 })();
 </script>
