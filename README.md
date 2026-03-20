@@ -24,7 +24,6 @@ O projeto também conta com **documentação automática da API com Swagger**, s
 - **HTML**
 - **CSS**
 - **JavaScript**
-- **Docker**
 
 ---
 
