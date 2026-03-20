@@ -114,8 +114,14 @@ main.container {
 /* ==================== AUTENTICACAO (LOGIN / REGISTRO) ==================== */
 /* Layout SaaS moderno com gradiente e card central */
 .auth-page {
-    min-height: 100vh;
-    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    overflow-y: auto;
+    z-index: 9999;
+
     margin: 0;
     display: flex;
     align-items: center;
@@ -128,7 +134,6 @@ main.container {
         radial-gradient(700px 320px at 82% 18%, rgba(124, 58, 237, 0.12), rgba(124, 58, 237, 0) 58%),
         linear-gradient(180deg, var(--bg-body) 0%, #ffffff 100%);
     overflow: hidden;
-    position: relative;
 }
 
 .auth-shell {
